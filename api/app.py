@@ -133,6 +133,8 @@ def predict_batch(batch: Batch):
 def stats():
     try:
         col = state["mongo"][DB][COLLECTION]
+        if col.estimated_document_count() == 0:  # DB was unreachable at startup -> seed now
+            seed_mongo()
         by_label = {r["_id"]: r["n"] for r in col.aggregate([{"$group": {"_id": "$label_name", "n": {"$sum": 1}}}])}
         by_type = list(col.aggregate([
             {"$match": {"label": 1}},

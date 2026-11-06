@@ -6,6 +6,18 @@ tags: []
 
 # Détection du harcèlement social (cyberbullying) – Test Data Science
 
+### 🔗 Démo en ligne : **https://sentinelle-cyberbullying.onrender.com**
+
+| | |
+|---|---|
+| **Tableau de bord** (client / modérateurs) | https://sentinelle-cyberbullying.onrender.com |
+| **Documentation API** (développeurs) | https://sentinelle-cyberbullying.onrender.com/docs |
+| **Hébergement** | Render (Docker, déploiement automatique à chaque push sur `main`) + MongoDB Atlas (M0, AWS Paris) |
+
+> Offre gratuite : après 15 minutes sans visite, le service se met en veille. La première ouverture prend alors environ 50 secondes.
+
+![Tableau de bord Sentinelle](figures/ui_1_harcelement.png)
+
 **Tout le projet est dans un seul notebook : [`cyberbullying_detection.ipynb`](cyberbullying_detection.ipynb)** (déjà exécuté, résultats et graphiques visibles directement).
 
 | Section du notebook | Contenu |
@@ -87,7 +99,9 @@ Le fichier [`render.yaml`](render.yaml) décrit le service. Render construit le 
 2. **Render** (https://render.com, connexion avec GitHub) :
    - choisir **New → Blueprint** et sélectionner ce dépôt ;
    - renseigner `MONGO_URI` avec la chaîne Atlas, puis cliquer sur **Deploy**.
-3. Ouvrir l'URL fournie (`https://sentinelle-cyberbullying.onrender.com`). Au premier démarrage, l'API remplit automatiquement la base Atlas avec les 5 760 messages.
+3. Ouvrir l'URL fournie (ici **https://sentinelle-cyberbullying.onrender.com**). Dès que la base est joignable, l'API la remplit automatiquement avec les 5 760 messages, au démarrage ou au premier appel de `/stats`.
+
+> Si `/health` renvoie `"mongo": "down"` avec une erreur `SSL handshake failed`, l'adresse IP n'est pas autorisée dans Atlas : ajoutez `0.0.0.0/0` dans *Network Access*.
 
 > L'offre gratuite de Render met le service en veille après 15 minutes d'inactivité. La première requête suivante prend environ 50 secondes.
 

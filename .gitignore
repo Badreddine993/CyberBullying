@@ -10,3 +10,8 @@ __pycache__/
 
 # Confidential test statement - never publish
 *.pdf
+
+# Secrets - never commit
+*.env
+.env*
+*credentials*
