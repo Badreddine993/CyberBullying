@@ -1,9 +1,3 @@
----
-noteId: "ce91c6e0d9ee11f1822ff5e8d39c3dcc"
-tags: []
-
----
-
 <p align="center">
   <img src="figures/sentinelle-logo.svg" alt="Sentinelle – Détection du harcèlement" width="360">
 </p>
