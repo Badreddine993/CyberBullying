@@ -1,0 +1,12 @@
+# Python / Jupyter
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.notebook/
+
+# Confidential test statement - never publish
+*.pdf

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sentinelle : détection automatique des messages de harcèlement sur les réseaux sociaux.">
+<title>Sentinelle · Détection du harcèlement</title>
+<script src="/static/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<a class="visually-hidden-focusable skip-link" href="#main">Aller au contenu principal</a>
+
+<header>
+<nav class="navbar sticky-top" aria-label="Navigation principale">
+  <div class="container-xl">
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" href="/">
+      <span class="brand-mark" aria-hidden="true"><i class="bi bi-shield-check"></i></span> Sentinelle
+      <span class="badge rounded-pill bg-body-tertiary text-body-secondary border fw-medium d-none d-sm-inline">Modération</span>
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <span class="small text-body-secondary d-none d-md-inline" id="apiStatus" role="status">
+        <span class="status-dot bg-secondary me-1" aria-hidden="true"></span>Connexion...
+      </span>
+      <a class="btn btn-sm btn-outline-secondary" href="/docs" target="_blank" rel="noopener">
+        <i class="bi bi-code-slash me-1" aria-hidden="true"></i><span class="d-none d-sm-inline">Documentation API</span>
+        <span class="visually-hidden d-sm-none">Documentation API</span>
+        <span class="visually-hidden">(nouvel onglet)</span>
+      </a>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="container-xl py-4" id="main" tabindex="-1">
+  <div class="mb-4">
+    <p class="eyebrow mb-1">Tableau de bord</p>
+    <h1 class="h3 fw-bold mb-1">Analyse des messages</h1>
+    <p class="text-body-secondary mb-0">Détectez automatiquement les messages de harcèlement publiés sur vos réseaux sociaux.</p>
+  </div>
+
+  <!-- Screen-reader announcements of results -->
+  <div class="visually-hidden" aria-live="polite" aria-atomic="true" id="announce"></div>
+
+  <div class="row g-4">
+    <!-- Input -->
+    <div class="col-lg-7">
+      <section class="card h-100" aria-labelledby="inputTitle">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <h2 class="card-title" id="inputTitle">Nouveau contrôle</h2>
+          <div class="nav nav-pills gap-1" role="tablist" aria-label="Type d'analyse">
+            <button class="nav-link active py-1 px-3" role="tab" id="tab-one" data-mode="one"
+                    aria-selected="true" aria-controls="inputPanel" tabindex="0">
+              <i class="bi bi-chat-left-text me-1" aria-hidden="true"></i>Message</button>
+            <button class="nav-link py-1 px-3" role="tab" id="tab-many" data-mode="many"
+                    aria-selected="false" aria-controls="inputPanel" tabindex="-1">
+              <i class="bi bi-list-ul me-1" aria-hidden="true"></i>Lot de messages</button>
+          </div>
+        </div>
+        <div class="card-body" role="tabpanel" id="inputPanel" aria-labelledby="tab-one">
+          <label for="input" class="form-label fw-medium" id="inputLabel">Contenu du message</label>
+          <textarea id="input" class="form-control" maxlength="20000" lang="en"
+                    aria-describedby="inputHelp counter"
+                    placeholder="Collez le message à vérifier..."></textarea>
+          <div class="d-flex justify-content-between mt-2 small text-body-secondary">
+            <span id="inputHelp"><i class="bi bi-info-circle me-1" aria-hidden="true"></i><span id="inputHelpText">Le modèle est entraîné sur des messages en anglais.</span></span>
+            <span id="counter">0 caractère</span>
+          </div>
+          <div class="alert alert-danger py-2 mt-3 mb-0 d-none" id="err" role="alert"></div>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <button class="btn btn-brand px-4" id="go" type="button">
+              <span class="spinner-border spinner-border-sm me-2 d-none" id="spin" aria-hidden="true"></span>
+              <span id="goLabel">Analyser</span>
+            </button>
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-lightning me-1" aria-hidden="true"></i>Exemples
+              </button>
+              <ul class="dropdown-menu" id="examples"></ul>
+            </div>
+            <button class="btn btn-link text-body-secondary text-decoration-none ms-auto" id="clear" type="button">
+              <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Effacer
+            </button>
+          </div>
+          <p class="small text-body-secondary mt-3 mb-0">Astuce : <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>Entrée</kbd> pour lancer l'analyse.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Result -->
+    <div class="col-lg-5">
+      <section class="card h-100" aria-labelledby="resultTitle">
+        <div class="card-header"><h2 class="card-title" id="resultTitle">Résultat</h2></div>
+        <div class="card-body">
+          <div class="empty-state" id="empty">
+            <i class="bi bi-search d-block mb-2" aria-hidden="true"></i>
+            <p class="fw-medium text-body mb-0">Aucune analyse pour le moment</p>
+            <p class="small mb-0">Saisissez un message puis cliquez sur « Analyser ».</p>
+          </div>
+
+          <div class="d-none" id="result">
+            <div class="d-flex align-items-center gap-4">
+              <div class="gauge" id="gauge" role="img" aria-label="Score de risque">
+                <div aria-hidden="true"><span><b id="score">0</b><br><small>score de risque</small></span></div>
+              </div>
+              <div>
+                <span class="badge rounded-pill mb-2" id="badge"></span>
+                <p class="h5 fw-bold mb-1" id="verdict"></p>
+                <p class="small fw-medium mb-0" id="level"></p>
+              </div>
+            </div>
+            <hr>
+            <h3 class="eyebrow mb-2">Termes déterminants</h3>
+            <ul id="keywords" class="list-unstyled d-flex flex-wrap gap-2 mb-0" lang="en"></ul>
+            <p class="small text-body-secondary mt-3 mb-0" id="recommendation"></p>
+          </div>
+
+          <div class="d-none" id="batchSummary">
+            <dl class="row g-3 text-center mb-0">
+              <div class="col-4 d-flex flex-column-reverse"><dt class="small text-body-secondary fw-normal">analysés</dt><dd class="kpi-value mb-0" id="bTotal">0</dd></div>
+              <div class="col-4 d-flex flex-column-reverse"><dt class="small text-body-secondary fw-normal">signalés</dt><dd class="kpi-value text-danger-emphasis mb-0" id="bBad">0</dd></div>
+              <div class="col-4 d-flex flex-column-reverse"><dt class="small text-body-secondary fw-normal">conformes</dt><dd class="kpi-value text-success-emphasis mb-0" id="bOk">0</dd></div>
+            </dl>
+            <div class="progress progress-thin mt-3" aria-hidden="true"><div class="progress-bar bg-danger" id="bBar"></div></div>
+            <p class="small text-body-secondary mt-2 mb-0">Le détail de chaque message est affiché dans le tableau ci-dessous.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Batch table -->
+    <div class="col-12 d-none" id="tableCard">
+      <section class="card" aria-labelledby="tableTitle">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 class="card-title" id="tableTitle">Détail du lot</h2>
+          <button class="btn btn-sm btn-outline-secondary" id="export" type="button">
+            <i class="bi bi-download me-1" aria-hidden="true"></i>Exporter CSV</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <caption class="visually-hidden">Résultat de chaque message du lot, trié du score le plus élevé au plus faible</caption>
+            <thead><tr>
+              <th scope="col" class="col-status">Statut</th><th scope="col">Message</th>
+              <th scope="col" class="col-score">Score</th><th scope="col">Termes déterminants</th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- History -->
+    <div class="col-12">
+      <section class="card history" aria-labelledby="histTitle">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 class="card-title" id="histTitle">Historique de la session</h2>
+          <span class="small text-body-secondary" id="histCount">0 analyse</span>
+        </div>
+        <ul class="list-group list-group-flush" id="history">
+          <li class="list-group-item text-body-secondary small py-3">Les analyses effectuées apparaîtront ici.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- Dataset overview -->
+  <section aria-labelledby="dataTitle">
+    <div class="mt-5 mb-3">
+      <p class="eyebrow mb-1">Modèle</p>
+      <h2 class="h5 fw-bold mb-0" id="dataTitle">Données d'apprentissage</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-sm-6 col-xl-3"><div class="card p-3 h-100"><div class="d-flex gap-3 align-items-center">
+        <div class="kpi-icon bg-primary-subtle text-primary-emphasis" aria-hidden="true"><i class="bi bi-chat-square-text"></i></div>
+        <div><p class="kpi-value mb-0" id="kTotal">–</p><p class="small text-body-secondary mb-0">messages étudiés</p></div></div></div></div>
+      <div class="col-sm-6 col-xl-3"><div class="card p-3 h-100"><div class="d-flex gap-3 align-items-center">
+        <div class="kpi-icon bg-danger-subtle text-danger-emphasis" aria-hidden="true"><i class="bi bi-exclamation-octagon"></i></div>
+        <div><p class="kpi-value mb-0" id="kBully">–</p><p class="small text-body-secondary mb-0">cas de harcèlement</p></div></div></div></div>
+      <div class="col-sm-6 col-xl-3"><div class="card p-3 h-100"><div class="d-flex gap-3 align-items-center">
+        <div class="kpi-icon bg-success-subtle text-success-emphasis" aria-hidden="true"><i class="bi bi-bullseye"></i></div>
+        <div><p class="kpi-value mb-0" id="kF1">–</p><p class="small text-body-secondary mb-0">score F1 (test)</p></div></div></div></div>
+      <div class="col-sm-6 col-xl-3"><div class="card p-3 h-100"><div class="d-flex gap-3 align-items-center">
+        <div class="kpi-icon bg-warning-subtle text-warning-emphasis" aria-hidden="true"><i class="bi bi-search-heart"></i></div>
+        <div><p class="kpi-value mb-0" id="kRecall">–</p><p class="small text-body-secondary mb-0">des harcèlements détectés</p></div></div></div></div>
+
+      <div class="col-lg-8"><div class="card h-100">
+        <div class="card-header"><h3 class="card-title" id="typesTitle">Harcèlement par catégorie</h3></div>
+        <div class="card-body chart-box">
+          <canvas id="typesChart" role="img" aria-labelledby="typesTitle" aria-describedby="typesDesc"></canvas>
+          <p class="visually-hidden" id="typesDesc">Chargement des données...</p>
+        </div>
+      </div></div>
+      <div class="col-lg-4"><div class="card h-100">
+        <div class="card-header"><h3 class="card-title" id="labelTitle">Répartition des messages</h3></div>
+        <div class="card-body chart-box d-flex align-items-center justify-content-center">
+          <canvas id="labelChart" role="img" aria-labelledby="labelTitle" aria-describedby="labelDesc"></canvas>
+          <p class="visually-hidden" id="labelDesc">Chargement des données...</p>
+        </div>
+      </div></div>
+    </div>
+  </section>
+</main>
+
+<footer class="container-xl d-flex flex-wrap justify-content-between gap-2 border-top mt-5 pt-3 pb-4">
+  <span>Résultats fournis à titre d'aide à la décision. Une vérification humaine reste recommandée.</span>
+  <span id="modelName">Modèle : –</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

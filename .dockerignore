@@ -1,0 +1,9 @@
+.venv
+__pycache__
+*.pyc
+*.ipynb
+.ipynb_checkpoints
+figures
+data/raw_cyberbullying.csv
+*.pdf
+.notebook

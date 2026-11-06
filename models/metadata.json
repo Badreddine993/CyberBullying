@@ -1,0 +1,17 @@
+{
+  "best_model": "Naive Bayes",
+  "threshold": 0.5,
+  "trained_on": 5760,
+  "test_metrics": {
+    "CV F1 (moy)": 0.9144,
+    "CV F1 (\u00e9cart-type)": 0.0067,
+    "CV ROC-AUC": 0.9666,
+    "Accuracy": 0.9106,
+    "Precision": 0.8997,
+    "Recall": 0.9412,
+    "F1": 0.92,
+    "ROC-AUC": 0.9725,
+    "Entra\u00eenement (s)": 0.1939,
+    "Pr\u00e9diction (ms/msg)": 0.0302
+  }
+}
