@@ -76,6 +76,23 @@ Arrêt : `docker compose down` (ajouter `-v` pour supprimer les données Mongo).
 
 ## Déploiement
 
+### En ligne : Render + MongoDB Atlas (gratuit)
+
+Le fichier [`render.yaml`](render.yaml) décrit le service. Render construit le `Dockerfile` depuis GitHub et redéploie automatiquement à chaque `git push`.
+
+1. **MongoDB Atlas** (https://cloud.mongodb.com) :
+   - créer un cluster gratuit **M0** et un utilisateur de base de données ;
+   - dans *Network Access*, autoriser `0.0.0.0/0`, car Render (offre gratuite) n'a pas d'IP fixe ;
+   - copier la chaîne de connexion `mongodb+srv://<user>:<password>@<cluster>.mongodb.net/`.
+2. **Render** (https://render.com, connexion avec GitHub) :
+   - choisir **New → Blueprint** et sélectionner ce dépôt ;
+   - renseigner `MONGO_URI` avec la chaîne Atlas, puis cliquer sur **Deploy**.
+3. Ouvrir l'URL fournie (`https://sentinelle-cyberbullying.onrender.com`). Au premier démarrage, l'API remplit automatiquement la base Atlas avec les 5 760 messages.
+
+> L'offre gratuite de Render met le service en veille après 15 minutes d'inactivité. La première requête suivante prend environ 50 secondes.
+
+### Autres plateformes
+
 L'image est autonome (modèle + données incluses, versions de librairies figées par le notebook dans `api/requirements.txt`) et sans état. Il suffit de fournir `MONGO_URI` (ex. MongoDB Atlas) :
 
 ```bash

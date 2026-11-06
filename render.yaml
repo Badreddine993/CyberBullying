@@ -1,0 +1,15 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# Render builds the Dockerfile from this repo and redeploys on every push to main.
+services:
+  - type: web
+    name: sentinelle-cyberbullying
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MONGO_URI          # MongoDB Atlas connection string, entered in the Render dashboard
+        sync: false

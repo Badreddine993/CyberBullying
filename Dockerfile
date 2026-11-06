@@ -19,8 +19,10 @@ COPY data/clean_cyberbullying.csv data/clean_cyberbullying.csv
 RUN useradd --create-home appuser && chown -R appuser /app
 USER appuser
 
+# Cloud platforms (Render, Cloud Run, Railway...) pass the port in $PORT; locally it defaults to 8000.
+ENV PORT=8000
 EXPOSE 8000
 WORKDIR /app/api
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+  CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://localhost:{os.environ[\"PORT\"]}/health')" || exit 1
+CMD ["sh", "-c", "exec uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
