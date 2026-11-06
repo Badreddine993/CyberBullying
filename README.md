@@ -18,20 +18,20 @@
 
 ## Sommaire
 
-1. [Démo en ligne](#-démo-en-ligne)
-2. [Sentinelle, le tableau de bord](#-sentinelle-le-tableau-de-bord)
-3. [Architecture](#-architecture)
-4. [Le notebook (étapes 1 à 8 du test)](#-le-notebook-étapes-1-à-8-du-test)
-5. [MongoDB](#-mongodb)
-6. [API](#-api)
-7. [Exécution en local](#-exécution-en-local)
-8. [Déploiement (Render + MongoDB Atlas)](#-déploiement-render--mongodb-atlas)
-9. [Logs, supervision et dépannage](#-logs-supervision-et-dépannage)
-10. [Résultats](#-résultats-étude-comparative)
+1. [Démo en ligne](#démo-en-ligne)
+2. [Sentinelle, le tableau de bord](#sentinelle-le-tableau-de-bord)
+3. [Architecture](#architecture)
+4. [Le notebook (étapes 1 à 8 du test)](#le-notebook-étapes-1-à-8-du-test)
+5. [MongoDB](#mongodb)
+6. [API](#api)
+7. [Exécution en local](#exécution-en-local)
+8. [Déploiement (Render + MongoDB Atlas)](#déploiement-render--mongodb-atlas)
+9. [Logs, supervision et dépannage](#logs-supervision-et-dépannage)
+10. [Résultats](#résultats-étude-comparative)
 
 ---
 
-## 🔗 Démo en ligne
+## Démo en ligne
 
 | | Lien |
 |---|---|
@@ -44,7 +44,7 @@
 
 ---
 
-## 🛡️ Sentinelle, le tableau de bord
+## Sentinelle, le tableau de bord
 
 Sentinelle est l'interface destinée aux utilisateurs non techniques : modérateurs ou client. Elle est servie par l'API à l'adresse `/`.
 
@@ -69,10 +69,10 @@ Sentinelle est l'interface destinée aux utilisateurs non techniques : modérate
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
-flowchart LR
+flowchart TB
     NB["📓 Notebook<br/>nettoyage · EDA · modèles"] -->|génère api/ et models/| GH["GitHub<br/>branche main"]
     GH -->|git push = redéploiement auto| R
     subgraph R["☁️ Render · conteneur Docker"]
@@ -90,7 +90,7 @@ flowchart LR
 
 ---
 
-## 📓 Le notebook (étapes 1 à 8 du test)
+## Le notebook (étapes 1 à 8 du test)
 
 **Tout le projet est dans un seul notebook : [`cyberbullying_detection.ipynb`](cyberbullying_detection.ipynb)**. Il est déjà exécuté : les résultats et graphiques sont visibles directement sur GitHub.
 
@@ -123,7 +123,7 @@ Données : [Kaggle – Cyberbullying and Harassment Detection using ML](https://
 
 ---
 
-## 🍃 MongoDB
+## MongoDB
 
 ### Base et collections
 
@@ -197,7 +197,7 @@ Au démarrage, l'API vérifie la collection `messages`. Si elle est vide (nouvel
 
 ---
 
-## 🔌 API
+## API
 
 | Endpoint | Méthode | Rôle |
 |---|---|---|
@@ -217,7 +217,7 @@ curl -X POST https://sentinelle-cyberbullying.onrender.com/predict \
 
 ---
 
-## 💻 Exécution en local
+## Exécution en local
 
 Prérequis : Python 3.12+ et Docker Desktop lancé.
 
@@ -236,7 +236,7 @@ Ouvrir http://localhost:8000 pour Sentinelle, ou http://localhost:8000/docs pour
 
 ---
 
-## 🚀 Déploiement (Render + MongoDB Atlas)
+## Déploiement (Render + MongoDB Atlas)
 
 Le service est décrit dans [`render.yaml`](render.yaml) (Blueprint). Render construit le `Dockerfile` depuis GitHub et **redéploie automatiquement à chaque `git push` sur `main`**.
 
@@ -275,7 +275,7 @@ docker run -d -p 8000:8000 -e MONGO_URI="mongodb+srv://..." <registre>/sentinell
 
 ---
 
-## 📋 Logs, supervision et dépannage
+## Logs, supervision et dépannage
 
 ### Où trouver les logs
 
@@ -308,7 +308,7 @@ MongoDB seeding skipped: <erreur>      ← la base n'était pas joignable au dé
 
 ---
 
-## 📊 Résultats (étude comparative)
+## Résultats (étude comparative)
 
 | Métrique (test, n = 1 152) | Régression logistique | Naive Bayes ✅ |
 |---|---|---|
